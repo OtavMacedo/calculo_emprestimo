@@ -61,30 +61,46 @@ class Emprestimo:
         return self.valor_emprestimo/self.parcelas
 
         
-    def _calcula_valor_juros(self): 
+    def _calcula_valor_juros(self) -> None: 
         """
         Calcula o valor do empréstimo com juros compostos.
         """
-
         # Fórmula: M = C * (1 + i)^t
         taxa = (1 + self.taxa_juros) ** self.tempo_anos
         self.valor_emprestimo *= taxa
 
-    def mostra_vencimentos_valores(self) -> None:
+    def imprime_parcelas_vencimentos(self) -> None:
         """
-        Exibe as datas de vencimento e os valores das parcelas.
+        Imprime o valor de cada parcela e a data de vencimento
         """
-        data_parcela_inicial = self.data_inicial_datetime + relativedelta(months=1)
+        lista_parcelas = self.calcula_parcelas_vencimentos()
+
+        for parcela in lista_parcelas:
+            print(parcela)
+        
+
+    def calcula_parcelas_vencimentos(self) -> list[str]:
+        """
+        Calcula o prazo de pagamento de cada parcela.
+        """
+
+        delta_mes = relativedelta(months=1)
+        data_parcela_inicial = self.data_inicial_datetime + delta_mes
+
+        lista_parcelas = []
         
         for parcela in range(1, self.parcelas + 1):
             data_str = data_parcela_inicial.strftime(self.formato)
             valor_str = f'Valor: {self.valor_parcela:.2f}'
             contagem_parcelas = f'{parcela}/{self.parcelas}'
             data_valor_parcelas = f'{data_str} {valor_str} {contagem_parcelas}'
-            print(data_valor_parcelas)
-            data_parcela_inicial += relativedelta(months=1)
+            lista_parcelas.append(data_valor_parcelas)
+            data_parcela_inicial += delta_mes
+
+        return lista_parcelas
 
 
 if __name__ == '__main__':
     teste = Emprestimo(100000000, 1, '10/02/2004', taxa_juros=0.1)
-    teste.mostra_vencimentos_valores()
+    teste.imprime_parcelas_vencimentos()
+    # teste.mostra_vencimentos_valores()
